@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111327" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="iPhoneだけで遊べる顔追従V体スタジオ。" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <title>むぎライブ | iPhone V体スタジオ</title>
+  <style>
+    :root { color-scheme: dark; --ink:#f7f5ff; --muted:#aeb1c6; --panel:#202238; --line:rgba(255,255,255,.1); --accent:#f6a6c6; --hair:#8b5549; --hairShade:#643d3d; --skin:#ffe0c9; --eye:#b64e66; --shirt:#b2b4e8; --faceX:0px; }
+    *{box-sizing:border-box} html{min-height:100%; background:#101122}
+    body{margin:0; font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif; color:var(--ink); background:radial-gradient(ellipse at 20% 0%,#282443 0%,#151628 44%,#101122 88%); min-height:100dvh;}
+    button,input,select{font:inherit} button{cursor:pointer; -webkit-tap-highlight-color:transparent}
+    .top{max-width:1150px;margin:auto;padding:17px 20px 10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .brand{display:flex;align-items:center;gap:12px}.brandicon{display:grid;place-items:center;border-radius:14px;width:43px;height:43px;background:linear-gradient(145deg,#ffe2ec,#e1b8ff);color:#583d79;font-size:22px;box-shadow:0 5px 25px #c67deb22}
+    h1{margin:0;font-size:19px;letter-spacing:.03em} .tagline{color:#a9a9c3;font-size:11px;letter-spacing:.08em;margin-top:4px}
+    .app{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(290px,.85fr);gap:20px;max-width:1150px;margin:auto;padding:7px 20px 26px;align-items:start}
+    .stagecol{min-width:0}.stagebox{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #ffffff20;border-radius:28px;aspect-ratio:3/4;max-height:calc(100dvh - 166px);min-height:440px;box-shadow:0 28px 60px #05051165;background:#292840;isolation:isolate}
+    .stagebox[data-scene="night"]{background:radial-gradient(ellipse at 50% 24%,#635877 0%,#272c54 53%,#11152c 100%)}
+    .stagebox[data-scene="pink"]{background:linear-gradient(155deg,#f5c1dc,#c9bbec 54%,#9285bd)}
+    .stagebox[data-scene="green"]{background:#00b140}
+    .stagebox[data-scene="transparent"]{background:transparent}
+    .stagebox:after{pointer-events:none;content:"";position:absolute;inset:0;border-radius:28px;box-shadow:inset 0 0 0 1px #ffffff12}
+    .decor{position:absolute;inset:0;pointer-events:none;opacity:.5;background-image:radial-gradient(#fff9 1.5px,transparent 2px),radial-gradient(#fff8 1px,transparent 2px);background-size:73px 89px,127px 101px;background-position:12px 3px,66px 52px;filter:blur(.3px)}
+    .stagebox[data-scene="green"] .decor,.stagebox[data-scene="transparent"] .decor{display:none}
+    .avatar{width:100%;height:100%;overflow:visible;object-fit:contain;position:relative;z-index:1;max-width:100%;max-height:100%}
+    .stagebadge{position:absolute;top:16px;left:16px;z-index:2;border-radius:100px;padding:8px 11px;background:#151626b8;backdrop-filter:blur(12px);display:flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.01em;color:#f8f7ff}
+    .dot{display:inline-block;width:7px;height:7px;border-radius:100%;background:#9ba0b9;box-shadow:0 0 0 3px #aab1d21a}.dot.on{background:#6ee3bd;box-shadow:0 0 12px #6ee3bd}
+    .stagetext{position:absolute;z-index:2;left:0;right:0;bottom:18px;text-align:center;color:#ffffffcf;font-size:12px;text-shadow:0 2px 10px #11182780;letter-spacing:.04em}
+    .quickbar{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .btn{border:1px solid #ffffff22;color:white;padding:13px 16px;border-radius:14px;background:#292c43;font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;transition:background .15s;}
+    .btn:active{transform:scale(.98)} .btn.primary{background:linear-gradient(120deg,#f9adc7,#c7a5fa);color:#242239;border:0;box-shadow:0 7px 22px #d6a0df30}.btn.live{background:#ab405f;color:white}.btn:disabled{opacity:.55;cursor:default}
+    .quickbar .btn{flex:1;white-space:nowrap}
+    .sidebar{display:flex;flex-direction:column;gap:14px}
+    .panel{border:1px solid var(--line);border-radius:22px;padding:19px;background:#1b1d31e8;box-shadow:0 15px 28px #080a171f}
+    .panel h2{font-size:15px;margin:0 0 15px;display:flex;align-items:center;gap:9px}.step{font-size:10px;padding:4px 7px;background:#484260;border-radius:7px;color:#eec3eb;letter-spacing:.04em}
+    .twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choose{background:#25273e;border:1px solid #ffffff17;color:white;border-radius:13px;padding:13px 10px;text-align:left}.choose strong{display:block;font-size:14px}.choose small{color:#aeb1c6;font-size:10px;display:block;margin-top:4px}.choose.selected{border-color:#f5b0d7;background:linear-gradient(150deg,#4b354d,#30304b);box-shadow:inset 0 0 0 1px #ebb7ed4d}
+    .field{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;color:#dadeeb;font-size:12px}.field label{font-size:12px}.field select{background:#2b2e49;color:#fff;border:1px solid #ffffff2b;border-radius:11px;padding:10px 11px;min-width:145px;max-width:67%;font-size:12px}
+    .swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}.swatch{border:1px solid #ffffff18;background:#2c2e47;padding:9px 6px;border-radius:13px;display:flex;align-items:center;flex-direction:column;gap:7px;color:#c4c4d8;font-size:10px}
+    .swatch input{appearance:none;-webkit-appearance:none;padding:0;border:none;width:36px;height:32px;background:none;cursor:pointer}.swatch input::-webkit-color-swatch-wrapper{padding:0}.swatch input::-webkit-color-swatch{border:2px solid #ffffff77;border-radius:10px}
+    .info{color:#b1b3c9;font-size:11px;line-height:1.65;margin:10px 0 0}.status{border-radius:11px;background:#262942;color:#cdd0e5;padding:11px;font-size:11px;line-height:1.55;margin:12px 0 0}
+    .range{width:100%;accent-color:#eda6cf}.rangebox{display:flex;align-items:center;gap:10px;color:#bfc2d9;font-size:11px}.rangebox output{min-width:40px;text-align:right}
+    .micPreview{display:none;position:absolute;right:16px;top:16px;z-index:3;width:84px;height:110px;object-fit:cover;transform:scaleX(-1);border-radius:14px;border:2px solid #ffffff40;box-shadow:0 4px 18px #080b2570;opacity:.8}.micPreview.show{display:block}
+    .foot{max-width:1150px;margin:0 auto;padding:0 20px 30px;color:#777e9a;font-size:10px;text-align:center;line-height:1.7}
+    .stagebox.theater{position:fixed!important;inset:0!important;max-height:none!important;max-width:none!important;min-height:0!important;width:100vw!important;height:100dvh!important;z-index:100!important;border:0!important;border-radius:0!important;aspect-ratio:auto!important}
+    .stagebox.theater:after{display:none}.stagebox.theater .stagebadge,.stagebox.theater .stagetext,.stagebox.theater .micPreview{display:none!important}.exitTheater{display:none;position:fixed;z-index:150;top:calc(11px + env(safe-area-inset-top));right:14px;opacity:.62;border-radius:99px;background:#161629dd;color:white;border:1px solid #ffffff55;padding:10px 13px;font-size:12px}.exitTheater.show{display:block}
+    .help{font-size:11px;line-height:1.8;color:#b5b8cd;margin:0}.help strong{color:#f1e0ef}
+    @media(max-width:780px){.top{padding:13px 15px 7px}.app{padding:7px 13px 22px;grid-template-columns:1fr;gap:15px}.stagebox{min-height:0;max-height:none;aspect-ratio:3/3.6}.stagebadge{top:12px;left:12px}.stagetext{bottom:12px}.sidebar{gap:12px}.panel{padding:16px;border-radius:19px}.brandicon{height:39px;width:39px}.quickbar .btn{padding:11px 8px;font-size:12px}}
+    @media(max-width:380px){.stagebox{aspect-ratio:1/1.2}.swatches{gap:5px}.swatch{padding:7px 3px}.quickbar{gap:5px}}
+    @media(prefers-reduced-motion:reduce){.btn{transition:none}}
+  </style>
+</head>
+<body>
+<header class="top"><div class="brand"><div class="brandicon">✦</div><div><h1>むぎライブ <span style="color:#dcafd8;font-size:12px">mini studio</span></h1><div class="tagline">iPhone ONLY • V AVATAR STUDIO</div></div></div><span style="font-size:11px;color:#aaaec7">v1.0</span></header>
+<main class="app">
+  <div class="stagecol">
+    <div class="stagebox" id="stage" data-scene="night" aria-label="V体プレビュー">
+      <div class="decor"></div>
+      <div class="stagebadge"><span class="dot" id="liveDot"></span><span id="stageStatus">デモモード</span></div>
+      <video id="camera" playsinline muted autoplay class="micPreview" aria-label="顔認識用カメラ映像"></video>
+      <svg id="avatar" class="avatar" viewBox="0 0 600 760" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="動くアニメ風V体">
+        <defs>
+          <linearGradient id="faceGradient" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#fff2e4"/><stop offset="1" stop-color="var(--skin)"/></linearGradient>
+          <linearGradient id="coatGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--shirt)"/><stop offset="1" stop-color="#73789a"/></linearGradient>
+          <linearGradient id="hairShine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff77"/><stop offset=".9" stop-color="#ffffff00"/></linearGradient>
+          <filter id="dropShadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur stdDeviation="12"/></filter>
+          <style>
+            .line{stroke:#654858;stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+            .femaleOnly{display:inline}.maleOnly{display:none}
+            .hairfill{fill:var(--hair)}.hairshade{fill:var(--hairShade)}.skinfill{fill:var(--skin)}.eyefill{fill:var(--eye)}.clothfill{fill:var(--shirt)}
+            #avatarRoot[data-model="arco"] .femaleOnly{display:none}#avatarRoot[data-model="arco"] .maleOnly{display:inline}
+          </style>
+        </defs>
+        <g id="avatarRoot" data-model="aina">
+          <ellipse cx="300" cy="723" rx="177" ry="27" fill="#1e1835" opacity=".25" filter="url(#dropShadow)"/>
+          <g id="bodyRig">
+            <path d="M219 485 Q184 508 154 555 Q129 606 105 761 H503 Q470 591 442 554 Q417 511 373 492Z" fill="#59637f" opacity=".3"/>
+            <path d="M263 460 L254 544 Q304 589 347 539 L333 460Z" class="skinfill" stroke="#85586b" stroke-width="3"/>
+            <path d="M247 508 Q201 511 158 538 Q128 562 115 622 L88 766 H517 L485 615 Q475 550 436 530 Q403 511 353 505 Q315 543 300 546 Q269 538 247 508Z" fill="url(#coatGradient)" stroke="#4b4e70" stroke-width="5"/>
+            <path d="M247 506 Q280 550 300 547 Q329 546 353 506 L388 548 Q349 598 300 604 Q250 592 208 545Z" fill="#faf1f0" stroke="#686781" stroke-width="4"/>
+            <path d="M300 601 L300 760" stroke="#777793" stroke-width="5" stroke-dasharray="7 17" opacity=".65"/>
+            <path d="M173 558 Q150 616 146 761" stroke="#eef0ff" stroke-width="8" fill="none" opacity=".25"/>
+            <path d="M437 559 Q458 624 460 760" stroke="#393c69" stroke-width="10" fill="none" opacity=".18"/>
+            <g class="femaleOnly"><path d="M215 533 Q255 581 302 582 Q354 579 386 537 L363 524 Q324 551 302 550 Q266 549 243 523Z" fill="#e5e0f8" opacity=".9"/><path d="M277 551 Q297 569 316 553" fill="none" stroke="#bc9fc9" stroke-width="3"/></g>
+            <g class="maleOnly"><path d="M254 513 L300 549 344 511 363 523 303 586 233 525Z" fill="#fff3e8" stroke="#685d76" stroke-width="3"/><path d="M299 548 L288 595 300 620 313 594Z" fill="#5c567c"/></g>
+          </g>
+          <g id="headRig">
+            <!-- hair behind head -->
+            <g class="femaleOnly"><path d="M166 330 Q139 150 233 107 Q307 52 400 112 Q462 149 447 314 L476 540 Q444 590 392 552 L357 527 L221 525 Q173 561 135 524Z" class="hairshade" stroke="#5c3942" stroke-width="5"/><path d="M161 340 Q150 500 128 523 Q178 548 205 503" class="hairfill"/><path d="M443 325 Q447 481 472 530 Q427 549 400 509" class="hairfill"/></g>
+            <g class="maleOnly"><path d="M161 285 Q132 169 222 113 Q311 63 391 117 Q475 178 440 316 L402 421 195 412Z" class="hairshade" stroke="#4b3945" stroke-width="5"/></g>
+            <!-- ears -->
+            <ellipse cx="173" cy="363" rx="26" ry="40" class="skinfill" stroke="#a56e72" stroke-width="4"/>
+            <ellipse cx="427" cy="363" rx="26" ry="40" class="skinfill" stroke="#a56e72" stroke-width="4"/>
+            <path d="M169 356 Q182 345 181 369" fill="none" stroke="#e5a5a0" stroke-width="4"/>
+            <path d="M431 356 Q419 345 420 371" fill="none" stroke="#e5a5a0" stroke-width="4"/>
+            <!-- face -->
+            <path d="M184 248 Q186 157 293 143 Q420 157 418 271 L408 415 Q403 474 340 501 Q307 518 277 508 Q207 488 194 437 Q181 380 184 248Z" fill="url(#faceGradient)" stroke="#96667b" stroke-width="4"/>
+            <ellipse cx="215" cy="409" rx="37" ry="18" fill="#ed9aab" opacity=".27"/>
+            <ellipse cx="390" cy="409" rx="37" ry="18" fill="#ed9aab" opacity=".27"/>
+            <!-- brows -->
+            <path d="M209 289 Q236 275 261 288" stroke="var(--hairShade)" stroke-width="7" stroke-linecap="round" fill="none"/>
+            <path d="M341 288 Q370 275 391 291" stroke="var(--hairShade)" stroke-width="7" stroke-linecap="round" fill="none"/>
+            <!-- anime eyes -->
+            <g transform="translate(235 339)">
+              <g id="eyeLContent">
+                <path d="M-37 -9 Q-2 -43 38 -13 Q26 16 1 17 Q-23 16 -37 -9Z" fill="#fffafc" stroke="#5a3f51" stroke-width="4"/>
+                <ellipse cx="1" cy="-7" rx="20" ry="24" class="eyefill"/><ellipse cx="2" cy="-10" rx="12" ry="17" fill="#312d47"/><circle cx="-6" cy="-17" r="7" fill="#fff"/><circle cx="10" cy="2" r="3" fill="#fff9"/>
+                <path d="M-38 -12 Q-7 -38 37 -16" fill="none" stroke="#4c3445" stroke-width="7" stroke-linecap="round"/><path d="M-33 -17 l-11 -10 M-25 -25 l-6 -12" stroke="#4c3445" stroke-width="4" stroke-linecap="round"/>
+              </g><path id="eyeLClosed" d="M-32 2 Q0 15 32 1" stroke="#623e53" stroke-width="6" fill="none" stroke-linecap="round" opacity="0"/>
+            </g>
+            <g transform="translate(365 339)">
+              <g id="eyeRContent">
+                <path d="M-38 -13 Q4 -42 37 -9 Q22 16 -1 17 Q-26 16 -38 -13Z" fill="#fffafc" stroke="#5a3f51" stroke-width="4"/>
+                <ellipse cx="0" cy="-7" rx="20" ry="24" class="eyefill"/><ellipse cx="-1" cy="-10" rx="12" ry="17" fill="#312d47"/><circle cx="-9" cy="-17" r="7" fill="#fff"/><circle cx="8" cy="2" r="3" fill="#fff9"/>
+                <path d="M-38 -16 Q0 -39 37 -12" fill="none" stroke="#4c3445" stroke-width="7" stroke-linecap="round"/><path d="M34 -18 l11 -10 M26 -26 l6 -12" stroke="#4c3445" stroke-width="4" stroke-linecap="round"/>
+              </g><path id="eyeRClosed" d="M-31 1 Q0 15 31 1" stroke="#623e53" stroke-width="6" fill="none" stroke-linecap="round" opacity="0"/>
+            </g>
+            <!-- nose -->
+            <path d="M301 352 Q291 386 300 389 L312 390" stroke="#c98e8e" stroke-width="3" fill="none" stroke-linecap="round" opacity=".65"/>
+            <!-- mouth -->
+            <g transform="translate(301 440)">
+              <ellipse id="mouthOpen" cx="0" cy="0" rx="21" ry="0" fill="#70384b" stroke="#9b6174" stroke-width="2"/>
+              <ellipse id="tongue" cx="0" cy="7" rx="13" ry="4" fill="#df8c9f" opacity="0"/>
+              <path id="mouthClosed" d="M-18 0 Q0 8 18 -1" fill="none" stroke="#9c596a" stroke-width="4" stroke-linecap="round"/>
+              <path class="femaleOnly" id="fang" d="M7 -1 L13 -1 10 7Z" fill="#fff" stroke="#fff" stroke-width="1" opacity="0"/>
+            </g>
+            <circle class="femaleOnly" cx="394" cy="439" r="3.5" fill="#855261"/>
+            <!-- female hair in front -->
+            <g class="femaleOnly">
+              <path d="M173 291 Q149 173 217 127 Q280 79 363 111 Q434 129 440 224 Q441 270 422 325 Q411 268 396 226 Q350 244 296 219 Q255 246 207 251 Q209 305 185 338Z" class="hairfill" stroke="#583845" stroke-width="5" stroke-linejoin="round"/>
+              <path d="M171 299 Q173 188 227 138 Q274 95 345 109 Q281 129 264 201 Q230 244 192 263" class="hairshade" opacity=".42"/>
+              <path d="M296 113 Q289 168 229 231 Q298 239 345 190 Q382 205 398 225 Q382 145 325 118" class="hairfill"/>
+              <path d="M231 139 Q247 122 262 118" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity=".21"/>
+              <path d="M438 243 Q462 379 447 472 Q427 508 408 510 Q424 409 407 281Z" class="hairfill" stroke="#583845" stroke-width="4"/>
+              <path d="M164 258 Q145 381 167 475 Q180 509 196 509 Q182 407 192 291Z" class="hairfill" stroke="#583845" stroke-width="4"/>
+              <path d="M397 177 l29 21 -18 14" stroke="#e7bbd6" stroke-width="8" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- male short hairstyle in front -->
+            <g class="maleOnly">
+              <path d="M169 281 Q139 228 177 166 L198 178 Q182 136 243 111 L254 135 Q285 85 336 108 L329 129 Q377 93 413 148 Q459 198 429 302 Q414 270 411 238 Q376 219 362 201 Q331 222 308 218 Q287 219 270 204 Q231 248 190 249Z" class="hairfill" stroke="#533c45" stroke-width="5" stroke-linejoin="round"/>
+              <path d="M178 169 Q227 126 270 155 Q248 210 204 218" class="hairshade" opacity=".45"/>
+              <path d="M276 117 Q295 109 309 116" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".24"/>
+              <path d="M402 174 Q427 195 423 226" fill="none" stroke="#ffffff2e" stroke-width="9" stroke-linecap="round"/>
+            </g>
+            <g id="glasses" style="display:none">
+              <rect x="188" y="304" width="92" height="70" rx="24" fill="#b7c5df0d" stroke="#40405b" stroke-width="6"/>
+              <rect x="318" y="304" width="92" height="70" rx="24" fill="#b7c5df0d" stroke="#40405b" stroke-width="6"/>
+              <path d="M280 322 Q300 310 318 322 M188 330 L173 321 M410 329 L427 320" fill="none" stroke="#40405b" stroke-width="6"/>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <div class="stagetext" id="bottomLabel">カメラOFFでも、下のテスト操作で動くよ ✨</div>
+    </div>
+    <div class="quickbar">
+      <button id="startBtn" class="btn primary" type="button">📷 顔追従を開始</button>
+      <button id="testBtn" class="btn" type="button">✨ 動作テスト</button>
+      <button id="theaterBtn" class="btn" type="button">⛶ 撮影画面</button>
+    </div>
+  </div>
+  <div class="sidebar">
+    <section class="panel"><h2><span class="step">01</span> V体を選ぶ</h2>
+      <div class="twocol">
+        <button id="ainaBtn" class="choose selected" type="button"><strong>🎀 あいな風</strong><small>茶髪ボブ・赤い瞳</small></button>
+        <button id="arcoBtn" class="choose" type="button"><strong>🎤 あるこ風</strong><small>ショートヘア・眼鏡</small></button>
+      </div>
+      <div class="swatches">
+        <label class="swatch">髪<input id="hairColor" aria-label="髪の色" type="color" value="#8b5549"/></label>
+        <label class="swatch">瞳<input id="eyeColor" aria-label="瞳の色" type="color" value="#b64e66"/></label>
+        <label class="swatch">服<input id="shirtColor" aria-label="服の色" type="color" value="#b2b4e8"/></label>
+        <label class="swatch">肌<input id="skinColor" aria-label="肌の色" type="color" value="#ffe0c9"/></label>
+      </div>
+      <div class="field"><label for="glassesToggle">眼鏡</label><select id="glassesToggle"><option value="off">なし</option><option value="on">あり</option></select></div>
+    </section>
+    <section class="panel"><h2><span class="step">02</span> 顔で動かす</h2>
+      <p class="help">前面カメラで<strong>頭の傾き・まばたき・口の開閉・笑顔</strong>を反映するんよ。映像そのものは表示せず、顔の特徴だけ使う設計だよ。</p>
+      <div class="field"><label for="cameraPreview">カメラの小窓</label><select id="cameraPreview"><option value="off">非表示</option><option value="on">表示する</option></select></div>
+      <div class="field"><label for="sensitivity">動きの大きさ</label></div>
+      <div class="rangebox"><input id="sensitivity" class="range" type="range" min="40" max="180" value="100" step="10"><output id="sensitivityValue">100%</output></div>
+      <div class="status" id="statusText" aria-live="polite">準備OK！　「顔追従を開始」を押してカメラを許可してね。</div>
+    </section>
+    <section class="panel"><h2><span class="step">03</span> 背景と撮影</h2>
+      <div class="field"><label for="sceneSelect">背景</label><select id="sceneSelect"><option value="night">夜空</option><option value="pink">ピンク</option><option value="green">グリーンバック</option><option value="transparent">透明風（表示のみ）</option></select></div>
+      <div class="twocol"><button class="btn" id="shotBtn" type="button">📸 PNG保存</button><button class="btn" id="resetBtn" type="button">↺ リセット</button></div>
+      <p class="info">動画は「⛶ 撮影画面」でV体を大きく表示し、iPhoneの<strong>画面収録</strong>を使ってね。撮影画面を閉じるには右上の「×」を押すんよ。</p>
+    </section>
+    <section class="panel"><h2>💡 使い方のヒント</h2>
+      <p class="help">① まず「動作テスト」で動きを確認<br>② 公開したHTTPSサイトをSafariで開き「顔追従を開始」<br>③ Safariの共有メニューから「ホーム画面に追加」でアプリ風に使えるよ。<br><br>※ このV体は<strong>動作確認用のオリジナルSVGモデル</strong>。Live2DのPSDモデルではないので、髪や服が独立して物理演算する本格リギングには未対応です。</p>
+    </section>
+  </div>
+</main>
+<button class="exitTheater" id="exitTheater" type="button" aria-label="撮影画面を閉じる">× 閉じる</button>
+<footer class="foot">MUGI LIVE MINI • 無料・iPhone Safari対応想定 • カメラ映像を独自サーバーに送信する処理は含まれません<br>顔認識の初回読込にはインターネット接続が必要です</footer>
+<script type="module">
+const $ = id => document.getElementById(id);
+const root = document.documentElement;
+const stage = $('stage'), svg = $('avatar');
+const DEFAULTS = {
+  aina:{hair:'#8b5549',eye:'#b64e66',shirt:'#b2b4e8',skin:'#ffe0c9',glasses:false},
+  arco:{hair:'#55454b',eye:'#5b8291',shirt:'#799aa9',skin:'#ffe0c9',glasses:true}
+};
+const state = {model:'aina',scene:'night',strength:1,tracking:false,modelLoaded:false,mediaStream:null,lastBlink:0,faceFound:false};
+let landmarker = null, cameraLoopId = 0, testTimer = 0, lastVideoTime = -1, lastDetectAt = 0, lastTs = 0, trackingInProgress = false;
+let pose = {roll:0,x:0,y:0,lidL:0,lidR:0,mouth:0,smile:0};
+let target = {...pose};
+const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
+const mix=(a,b,t)=>a+(b-a)*t;
+function darken(hex,f=.76){ let a=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));return '#'+a.map(v=>Math.round(v*f).toString(16).padStart(2,'0')).join(''); }
+function loadSaved(){try{ const x=JSON.parse(localStorage.getItem('mugi-live-v1')||'{}');if(['aina','arco'].includes(x.model))state.model=x.model;if(['night','pink','green','transparent'].includes(x.scene))state.scene=x.scene; if(x.colors&&typeof x.colors==='object') state.colors=x.colors; if(x.glasses!==undefined)state.glasses=Boolean(x.glasses);if(typeof x.strength==='number')state.strength=clamp(x.strength,.4,1.8); }catch(e){} }
+function save(){try{localStorage.setItem('mugi-live-v1',JSON.stringify({model:state.model,scene:state.scene,colors:state.colors,glasses:state.glasses,strength:state.strength}));}catch(e){}}
+function applyModel(override=false){
+  const base=DEFAULTS[state.model];
+  if(override||!state.colors)state.colors={...base};
+  if(override||state.glasses===undefined)state.glasses=base.glasses;
+  $('avatarRoot').dataset.model=state.model;
+  $('ainaBtn').classList.toggle('selected',state.model==='aina');$('arcoBtn').classList.toggle('selected',state.model==='arco');
+  const ids={hair:'hairColor',eye:'eyeColor',shirt:'shirtColor',skin:'skinColor'};
+  for(const key of Object.keys(ids)){$(ids[key]).value=state.colors[key]||base[key];}
+  root.style.setProperty('--hair',state.colors.hair);root.style.setProperty('--hairShade',darken(state.colors.hair));root.style.setProperty('--eye',state.colors.eye);root.style.setProperty('--shirt',state.colors.shirt);root.style.setProperty('--skin',state.colors.skin);
+  $('glasses').style.display=state.glasses?'inline':'none';$('glassesToggle').value=state.glasses?'on':'off';
+  stage.dataset.scene=state.scene;$('sceneSelect').value=state.scene;$('sensitivity').value=state.strength*100;$('sensitivityValue').textContent=Math.round(state.strength*100)+'%';
+  save();
+}
+function updatePose(){
+  for(const k in pose){let a=(k==='roll'||k==='x'||k==='y')?.16:.23;pose[k]=mix(pose[k],target[k],a);}
+  const s=state.strength, roll=clamp(pose.roll*s,-18,18),tx=clamp(pose.x*s,-21,21),ty=clamp(pose.y*s,-14,14);
+  $('headRig').setAttribute('transform',`translate(${tx.toFixed(2)} ${ty.toFixed(2)}) rotate(${roll.toFixed(2)} 300 306)`);
+  $('bodyRig').setAttribute('transform',`translate(${(tx*.13).toFixed(2)} 0) rotate(${(roll*.16).toFixed(2)} 300 600)`);
+  const lidL=clamp(pose.lidL,0,1), lidR=clamp(pose.lidR,0,1);
+  $('eyeLContent').setAttribute('transform',`scale(1 ${Math.max(.04,1-lidL*.98).toFixed(3)})`);
+  $('eyeRContent').setAttribute('transform',`scale(1 ${Math.max(.04,1-lidR*.98).toFixed(3)})`);
+  $('eyeLClosed').setAttribute('opacity',String(clamp((lidL-.48)*2.25,0,1)));
+  $('eyeRClosed').setAttribute('opacity',String(clamp((lidR-.48)*2.25,0,1)));
+  const mouth=clamp(pose.mouth,0,1);
+  $('mouthOpen').setAttribute('ry',(mouth*25).toFixed(2));
+  $('mouthOpen').setAttribute('rx',(17 + mouth*8 + pose.smile*7).toFixed(2));
+  $('mouthOpen').setAttribute('opacity',String(clamp(mouth*6,0,1)));
+  $('tongue').setAttribute('opacity',String(clamp((mouth-.35)*2,0,1)));
+  $('mouthClosed').setAttribute('opacity',String(clamp(1-mouth*9,0,1)));
+  $('mouthClosed').setAttribute('d',`M-18 0 Q0 ${(8+pose.smile*12).toFixed(1)} 18 -1`);
+  $('fang').setAttribute('opacity',String(clamp((mouth-.2)*2,0,.9)));
+  requestAnimationFrame(updatePose);
+}
+function setStatus(message,active=false){$('statusText').textContent=message;$('stageStatus').textContent=active?'顔追従 LIVE':state.tracking?'顔を探しています…':'デモモード';$('liveDot').classList.toggle('on',active);}
+function resetPose(){target={roll:0,x:0,y:0,lidL:0,lidR:0,mouth:0,smile:0};}
+function testMotion(){
+  if(state.tracking){setStatus('動作テスト中は顔追従を一時的に解除するよ。カメラを止めてから試してね。',state.faceFound);return;}
+  if(testTimer)clearInterval(testTimer);
+  $('testBtn').disabled=true;setStatus('動作テスト中：首・まばたき・口パクが動くよ ✨');
+  const start=performance.now();
+  testTimer=setInterval(()=>{
+    const t=(performance.now()-start)/1000;
+    target.roll=Math.sin(t*2.1)*12;target.x=Math.sin(t*1.7)*10;target.y=Math.cos(t*2.2)*6;
+    target.lidL=(t%1.6>.99&&t%1.6<1.14)?1:0;target.lidR=target.lidL;
+    target.mouth=Math.max(0,Math.sin(t*7)*.74);target.smile=.65;
+    if(t>6){clearInterval(testTimer);testTimer=0;resetPose();$('testBtn').disabled=false;setStatus('動作テスト完了！ カメラで動かす準備もできてるよ。');}
+  },40);
+}
+async function makeLandmarker(){
+  if(landmarker)return landmarker;
+  // CDNとモデルは初回だけダウンロード。顔映像はサーバーには送らない。
+  const vers='0.10.34';
+  const {FaceLandmarker,FilesetResolver}=await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${vers}/vision_bundle.mjs`);
+  const vision=await FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${vers}/wasm`);
+  const options={baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',delegate:'GPU'},runningMode:'VIDEO',numFaces:1,outputFaceBlendshapes:true};
+  try{landmarker=await FaceLandmarker.createFromOptions(vision,options)}catch(e){ options.baseOptions.delegate='CPU'; landmarker=await FaceLandmarker.createFromOptions(vision,options); }
+  return landmarker;
+}
+function updateFromFace(result){
+  const points=result.faceLandmarks?.[0];const cats=result.faceBlendshapes?.[0]?.categories;
+  if(!points||!cats){if(state.faceFound){state.faceFound=false;setStatus('顔が見えないみたい。明るい場所で正面を向いてね。');}resetPose();return;}
+  if(!state.faceFound){state.faceFound=true;setStatus('顔を認識したよ！ まばたき・口パク・首の傾きを試してみてね。',true);}
+  const scores={};for(const c of cats){scores[c.categoryName]=c.score;}
+  const L=points[33],R=points[263],N=points[1];
+  const dx=R.x-L.x, dy=R.y-L.y, width=Math.max(.1,Math.hypot(dx,dy));
+  const roll= Math.atan2(dy,dx)*180/Math.PI;
+  const eyeMidX=(L.x+R.x)/2, eyeMidY=(L.y+R.y)/2;
+  const horizontal=clamp((N.x-eyeMidX)/width,-.35,.35);
+  const vertical=clamp((N.y-eyeMidY)/width-.45,-.25,.25);
+  target.roll=clamp(roll*1.15,-16,16);
+  target.x=clamp(-horizontal*35,-14,14);
+  target.y=clamp(vertical*27,-10,10);
+  target.lidL=clamp((scores.eyeBlinkLeft||0)*1.4,0,1);
+  target.lidR=clamp((scores.eyeBlinkRight||0)*1.4,0,1);
+  target.mouth=clamp((scores.jawOpen||0)*2,0,1);
+  target.smile=clamp(((scores.mouthSmileLeft||0)+(scores.mouthSmileRight||0))*.75,0,1);
+}
+function cameraFrame(t){
+  if(!state.tracking)return;
+  cameraLoopId=requestAnimationFrame(cameraFrame);
+  const v=$('camera');if(!landmarker||v.readyState<2||v.videoWidth===0)return;
+  if(t-lastDetectAt<60 || v.currentTime===lastVideoTime)return;lastDetectAt=t;lastVideoTime=v.currentTime;
+  try{const r=landmarker.detectForVideo(v,t);updateFromFace(r);}catch(err){setStatus('顔認識中に問題が発生したよ。いったん停止して再試行してね。');console.warn(err);stopTracking();}
+}
+async function startTracking(){
+  if(state.tracking){stopTracking();return;}
+  if(!navigator.mediaDevices?.getUserMedia){setStatus('カメラが使えない環境だよ。HTTPSで公開したURLをiPhoneのSafariで開いてね。');return;}
+  const btn=$('startBtn');btn.disabled=true;btn.textContent='⏳ 準備中…';
+  try{
+    setStatus('前面カメラの許可を確認しているよ…');
+    const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'user',width:{ideal:640},height:{ideal:480},frameRate:{ideal:24,max:30}}});
+    state.mediaStream=stream;
+    const v=$('camera');v.srcObject=stream;await v.play();
+    setStatus('顔認識モデルを読み込み中…初回は通信が必要だよ。');
+    await makeLandmarker();
+    state.tracking=true;state.faceFound=false;lastVideoTime=-1;lastDetectAt=0;
+    btn.classList.add('live');btn.textContent='■ カメラを停止';
+    setStatus('カメラ起動！ 画面を見ながら顔を動かしてね。');
+    cameraLoopId=requestAnimationFrame(cameraFrame);
+  }catch(err){
+    stopTracking();
+    const msg=err?.name==='NotAllowedError'?'カメラの使用が許可されなかったよ。Safariのサイト設定でカメラを許可してね。':err?.name==='NotFoundError'?'カメラが見つからなかったよ。':`起動できなかったよ：${err?.message||String(err)}`;
+    setStatus(msg);
+  }finally{btn.disabled=false;}
+}
+function stopTracking(){
+  state.tracking=false;state.faceFound=false;
+  cancelAnimationFrame(cameraLoopId);cameraLoopId=0;
+  if(state.mediaStream){state.mediaStream.getTracks().forEach(tr=>tr.stop());state.mediaStream=null;}
+  $('camera').srcObject=null;resetPose();$('startBtn').classList.remove('live');$('startBtn').textContent='📷 顔追従を開始';setStatus('カメラ停止。いつでも再開できるよ。');
+}
+function setTheater(enter){stage.classList.toggle('theater',enter);$('exitTheater').classList.toggle('show',enter); document.body.style.overflow=enter?'hidden':'';if(enter)window.scrollTo(0,0);}
+function makeSvgString(){
+ const clone=svg.cloneNode(true);
+ const rs=clone.querySelector('#avatarRoot');
+ // SVG CSS custom properties are not guaranteed to survive serialization: embed the current values.
+ clone.setAttribute('style',`--hair:${state.colors.hair};--hairShade:${darken(state.colors.hair)};--skin:${state.colors.skin};--eye:${state.colors.eye};--shirt:${state.colors.shirt}`);
+ clone.setAttribute('xmlns','http://www.w3.org/2000/svg');clone.setAttribute('width','900');clone.setAttribute('height','1140');
+ return new XMLSerializer().serializeToString(clone);
+}
+async function capturePNG(){
+  const btn=$('shotBtn');btn.disabled=true;
+  try{
+    const canvas=document.createElement('canvas');canvas.width=900;canvas.height=1140;const c=canvas.getContext('2d');
+    const scenes={night:['#635877','#11152c'],pink:['#f5c1dc','#9285bd'],green:['#00b140','#00b140']};
+    if(state.scene!=='transparent'){
+      const s=scenes[state.scene]||scenes.night;const gradient=c.createLinearGradient(0,0,900,1140);gradient.addColorStop(0,s[0]);gradient.addColorStop(1,s[1]);c.fillStyle=gradient;c.fillRect(0,0,900,1140);
+    }
+    const blob=new Blob([makeSvgString()],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(blob);
+    const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url;});
+    c.drawImage(img,0,0,900,1140);URL.revokeObjectURL(url);
+    const png=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+    if(!png)throw new Error('PNG変換に失敗');const outputUrl=URL.createObjectURL(png);const a=document.createElement('a');a.href=outputUrl;a.download='mugi-live-avatar.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(outputUrl),10000);
+    setStatus('PNGを書き出したよ！ Safariのダウンロード先を確認してね。',state.faceFound);
+  }catch(err){setStatus('画像を保存できなかったよ：'+(err?.message||err));}
+  finally{btn.disabled=false;}
+}
+function init(){
+ loadSaved();applyModel();requestAnimationFrame(updatePose);
+ $('ainaBtn').addEventListener('click',()=>{state.model='aina';applyModel(true);});$('arcoBtn').addEventListener('click',()=>{state.model='arco';applyModel(true);});
+ for(const [key,id] of Object.entries({hair:'hairColor',eye:'eyeColor',shirt:'shirtColor',skin:'skinColor'})) $(id).addEventListener('input',e=>{state.colors[key]=e.target.value;applyModel();});
+ $('glassesToggle').addEventListener('change',e=>{state.glasses=e.target.value==='on';applyModel()});
+ $('sceneSelect').addEventListener('change',e=>{state.scene=e.target.value;applyModel()});
+ $('sensitivity').addEventListener('input',e=>{state.strength=Number(e.target.value)/100;$('sensitivityValue').textContent=e.target.value+'%';save()});
+ $('cameraPreview').addEventListener('change',e=>$('camera').classList.toggle('show',e.target.value==='on'));
+ $('startBtn').addEventListener('click',startTracking);$('testBtn').addEventListener('click',testMotion);$('theaterBtn').addEventListener('click',()=>setTheater(true));$('exitTheater').addEventListener('click',()=>setTheater(false));
+ $('shotBtn').addEventListener('click',capturePNG);
+ $('resetBtn').addEventListener('click',()=>{state.model='aina';state.scene='night';state.strength=1;applyModel(true);resetPose();setStatus('初期設定に戻したよ。')});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.tracking)stopTracking();});
+ window.addEventListener('pagehide',()=>{if(state.tracking)stopTracking();});
+ if('serviceWorker' in navigator && location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+init();
+</script>
+</body>
+</html>
